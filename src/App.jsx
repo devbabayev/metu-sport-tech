@@ -6,6 +6,7 @@ import Feed from './features/dashboard/Feed';
 import Ranks from './features/ranks/Ranks';
 import Rewards from './features/rewards/Rewards';
 import Profile from './features/profile/Profile';
+import MoveCam from './features/move/MoveCam';
 
 function App() {
   return (
@@ -18,12 +19,16 @@ function App() {
           <Route path="/ranks" element={<Ranks />} />
           <Route path="/rewards" element={<Rewards />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/move" element={<MoveCam />} />
           <Route path="/" element={<Navigate to="/signup" replace />} />
         </Routes>
       </div>
     </Router>
   );
 }
+
+
+
 
 
 
