@@ -56,7 +56,7 @@ const MoveCam = () => {
     const p3 = landmarks[15];
 
     // Counting Logic
-    if (p1 && p2 && p3 && p1.visibility > 0.5 && p2.visibility > 0.5 && p3.visibility > 0.5) {
+    if (p1 && p2 && p3) {
       const angle = calculateAngle(p1, p2, p3);
       
       if (angle > ANGLE_UP) {
@@ -143,7 +143,7 @@ const MoveCam = () => {
         <div style={{ width: '48px' }} />
       </div>
 
-      <Webcam ref={webcamRef} mirrored={true} videoConstraints={{ width: 640, height: 480 }} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      <Webcam ref={webcamRef} mirrored={true} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       <canvas ref={canvasRef} width="640" height="480" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 5, transform: 'scaleX(-1)' }} />
 
       <AnimatePresence>
