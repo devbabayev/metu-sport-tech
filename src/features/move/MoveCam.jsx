@@ -3,6 +3,7 @@ import Webcam from 'react-webcam';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Trophy, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabaseClient';
 
 const MoveCam = () => {
   const webcamRef = useRef(null);
@@ -78,6 +79,35 @@ const MoveCam = () => {
         if (currentCounter.current >= TARGET_REPS) {
           hasFinished.current = true;
           setIsCompleted(true);
+          
+          // 🚀 Update Database in background
+          const updateDB = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+            const { data: missions } = await supabase.from('missions').select('*').eq('category', 'strength').limit(1);
+            
+            if (profile && missions && missions.length > 0) {
+               const mission = missions[0];
+               
+               // Mark as completed
+               await supabase.from('user_missions').upsert({
+                 user_id: user.id,
+                 mission_id: mission.id,
+                 current_value: TARGET_REPS,
+                 is_completed: true,
+                 updated_at: new Date().toISOString()
+               }, { onConflict: 'user_id,mission_id' });
+
+               // Award points
+               await supabase.rpc('increment_balance', { user_id: user.id, amount: mission.points });
+               await supabase.rpc('increment_city_points', { city_id: profile.city_id, amount: mission.points });
+            }
+          };
+
+          updateDB();
+
           // Redirect after a delay
           setTimeout(() => navigate('/dashboard'), 4000);
         }
