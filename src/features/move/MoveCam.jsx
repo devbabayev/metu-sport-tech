@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Trophy, CheckCircle, Zap } from 'lucide-react';
+import { ArrowLeft, Trophy, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const MoveCam = () => {
@@ -15,7 +15,6 @@ const MoveCam = () => {
   const [progress, setProgress] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
-  // Constants from counter.py
   const ANGLE_UP = 155;
   const ANGLE_DOWN = 75;
   const TARGET_REPS = 20;
@@ -32,16 +31,20 @@ const MoveCam = () => {
   };
 
   const onResults = (results) => {
+    // Check if components are ready and if we haven't finished yet
     if (!results.poseLandmarks || !canvasRef.current || hasFinished.current) return;
 
     const canvasCtx = canvasRef.current.getContext('2d');
+    const { width, height } = canvasRef.current;
+    
     canvasCtx.save();
-    canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    canvasCtx.clearRect(0, 0, width, height);
     
     // Draw Dark Overlay Filter
     canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-    canvasCtx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    canvasCtx.fillRect(0, 0, width, height);
 
+    // Draw Skeleton using global MediaPipe utils
     if (window.drawConnectors && window.drawLandmarks) {
       window.drawConnectors(canvasCtx, results.poseLandmarks, window.POSE_CONNECTIONS, { color: '#00FF64', lineWidth: 4 });
       window.drawLandmarks(canvasCtx, results.poseLandmarks, { color: '#FFFFFF', lineWidth: 2, radius: 4 });
@@ -52,7 +55,8 @@ const MoveCam = () => {
     const p2 = landmarks[13];
     const p3 = landmarks[15];
 
-    if (p1 && p2 && p3) {
+    // Counting Logic
+    if (p1 && p2 && p3 && p1.visibility > 0.5 && p2.visibility > 0.5 && p3.visibility > 0.5) {
       const angle = calculateAngle(p1, p2, p3);
       
       if (angle > ANGLE_UP) {
@@ -71,10 +75,10 @@ const MoveCam = () => {
         const prog = (currentCounter.current / TARGET_REPS) * 100;
         setProgress(Math.min(100, Math.round(prog)));
 
-        // CHECK COMPLETION
         if (currentCounter.current >= TARGET_REPS) {
           hasFinished.current = true;
           setIsCompleted(true);
+          // Redirect after a delay
           setTimeout(() => navigate('/dashboard'), 4000);
         }
       }
@@ -84,38 +88,52 @@ const MoveCam = () => {
   };
 
   useEffect(() => {
-    if (!window.Pose) return;
+    let camera = null;
+    let pose = null;
 
-    const pose = new window.Pose({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-    });
+    const initMediaPipe = async () => {
+      if (!window.Pose || !window.Camera) {
+         setTimeout(initMediaPipe, 500); // Retry if not loaded yet
+         return;
+      }
 
-    pose.setOptions({
-      modelComplexity: 1,
-      smoothLandmarks: true,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
-    });
-
-    pose.onResults(onResults);
-
-    if (webcamRef.current && webcamRef.current.video) {
-      const camera = new window.Camera(webcamRef.current.video, {
-        onFrame: async () => {
-          if (webcamRef.current && webcamRef.current.video && !hasFinished.current) {
-            await pose.send({ image: webcamRef.current.video });
-          }
-        },
-        width: 640,
-        height: 480,
+      pose = new window.Pose({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
       });
-      camera.start();
-    }
+
+      pose.setOptions({
+        modelComplexity: 1,
+        smoothLandmarks: true,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+      });
+
+      pose.onResults(onResults);
+
+      if (webcamRef.current && webcamRef.current.video) {
+        camera = new window.Camera(webcamRef.current.video, {
+          onFrame: async () => {
+            if (webcamRef.current && webcamRef.current.video && !hasFinished.current) {
+              await pose.send({ image: webcamRef.current.video });
+            }
+          },
+          width: 640,
+          height: 480,
+        });
+        camera.start();
+      }
+    };
+
+    initMediaPipe();
+
+    return () => {
+      if (camera) camera.stop();
+      if (pose) pose.close();
+    };
   }, []);
 
   return (
     <div style={{ position: 'relative', height: '100vh', background: 'black', overflow: 'hidden' }}>
-      {/* Header Overlay */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '20px', zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <button onClick={() => navigate('/dashboard')} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', padding: '12px', borderRadius: '15px', color: 'white' }}><ArrowLeft size={24} /></button>
         <div style={{ textAlign: 'center' }}>
@@ -125,34 +143,18 @@ const MoveCam = () => {
         <div style={{ width: '48px' }} />
       </div>
 
-      <Webcam ref={webcamRef} mirrored={true} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      <Webcam ref={webcamRef} mirrored={true} videoConstraints={{ width: 640, height: 480 }} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       <canvas ref={canvasRef} width="640" height="480" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 5, transform: 'scaleX(-1)' }} />
 
-      {/* Completion Overlay */}
       <AnimatePresence>
         {isCompleted && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            style={{ 
-              position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100, 
-              background: 'rgba(0,0,0,0.85)', display: 'flex', flexDirection: 'column', 
-              alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '30px', backdropFilter: 'blur(10px)'
-            }}
-          >
-            <motion.div 
-              initial={{ rotate: -20, scale: 0 }} 
-              animate={{ rotate: 0, scale: 1 }} 
-              transition={{ type: 'spring', damping: 10 }}
-              style={{ background: '#EB8911', width: '100px', height: '100px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}
-            >
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100, background: 'rgba(0,0,0,0.85)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '30px', backdropFilter: 'blur(10px)' }}>
+            <motion.div initial={{ rotate: -20, scale: 0 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: 'spring', damping: 10 }} style={{ background: '#EB8911', width: '100px', height: '100px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
               <Trophy size={60} color="white" />
             </motion.div>
             <h1 style={{ color: 'white', fontSize: '32px', fontWeight: '900', marginBottom: '10px' }}>MISSION COMPLETED!</h1>
             <p style={{ color: '#00FF64', fontSize: '18px', fontWeight: '800', marginBottom: '30px' }}>You earned +500 PTS for your city</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#AAA', fontSize: '14px', fontWeight: '700' }}>
-              <CheckCircle size={18} color="#00FF64" /> Redirecting to Dashboard...
-            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#AAA', fontSize: '14px', fontWeight: '700' }}><CheckCircle size={18} color="#00FF64" /> Redirecting to Dashboard...</div>
           </motion.div>
         )}
       </AnimatePresence>
