@@ -121,7 +121,20 @@ const MoveCam = () => {
       </div>
 
       <Webcam ref={webcamRef} mirrored={true} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-      <canvas ref={canvasRef} width="640" height="480" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 5 }} />
+      <canvas 
+        ref={canvasRef} 
+        width="640" 
+        height="480" 
+        style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0, 
+          width: '100%', 
+          height: '100%', 
+          zIndex: 5,
+          transform: 'scaleX(-1)' // This mirrors the skeleton to match the video
+        }} 
+      />
 
       <div style={{ position: 'absolute', top: '100px', left: '20px', zIndex: 10, background: 'rgba(0,0,0,0.6)', padding: '20px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', textAlign: 'center', minWidth: '120px' }}>
         <h1 style={{ color: '#00FF64', fontSize: '64px', fontWeight: '900', margin: 0, lineHeight: 1 }}>{count}</h1>
