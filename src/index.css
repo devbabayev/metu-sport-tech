@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap');
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #EB8911 0%, #94216E 100%);
+  --primary-orange: #EB8911;
+  --primary-purple: #94216E;
+  --bg-color: #F8F9FA;
+  --card-bg: #FFFFFF;
+  --input-bg: #F0F3F5;
+  --text-main: #333333;
+  --text-muted: #666666;
+  --border-radius: 12px;
+  --font-family: 'Open Sans', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  max-width: 480px; /* Mobile constraint */
+  min-height: 100vh;
+  background: white;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.premium-gradient-text {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.premium-button {
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 14px 24px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(148, 33, 110, 0.3);
+}
+
+.premium-button:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #444;
+  font-size: 14px;
+}
+
+.premium-input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+  padding: 14px 16px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.premium-input:focus {
+  outline: none;
+  border-color: var(--primary-orange);
+  background: white;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+}
