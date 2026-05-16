@@ -223,14 +223,21 @@ const Feed = () => {
                    </div>
                  </div>
                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', alignItems: 'center' }}>
-                   <button 
-                      onClick={() => updateProgress(mission.id, mission.category === 'cardio' ? 500 : 5)}
-                      style={{ background: '#FDFCFD', border: '1px solid #EEE', padding: '8px', borderRadius: '10px', color: '#EB8911', cursor: 'pointer' }}
-                   >
-                     <Plus size={18} />
-                   </button>
+                   {mission.category === 'strength' || mission.category === 'core' ? (
+                     <button 
+                        onClick={() => navigate('/move')}
+                        style={{ background: '#8B4513', border: 'none', width: '40px', height: '40px', borderRadius: '10px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                     >
+                       <Camera size={18} />
+                     </button>
+                   ) : (
+                     <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981' }}>
+                       <Zap size={18} />
+                     </div>
+                   )}
                    <span style={{ fontWeight: '800', color: '#F97316', fontSize: '12px' }}>{progressPercent}%</span>
                  </div>
+
               </div>
             );
           })}
