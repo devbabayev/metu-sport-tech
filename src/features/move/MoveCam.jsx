@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Zap } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Trophy, CheckCircle, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const MoveCam = () => {
@@ -13,6 +13,7 @@ const MoveCam = () => {
   const [stage, setStage] = useState('Wait...');
   const [feedback, setFeedback] = useState('Position yourself');
   const [progress, setProgress] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   // Constants from counter.py
   const ANGLE_UP = 155;
@@ -21,6 +22,7 @@ const MoveCam = () => {
 
   const currentStage = useRef(null);
   const currentCounter = useRef(0);
+  const hasFinished = useRef(false);
 
   const calculateAngle = (a, b, c) => {
     const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
@@ -30,7 +32,7 @@ const MoveCam = () => {
   };
 
   const onResults = (results) => {
-    if (!results.poseLandmarks || !canvasRef.current) return;
+    if (!results.poseLandmarks || !canvasRef.current || hasFinished.current) return;
 
     const canvasCtx = canvasRef.current.getContext('2d');
     canvasCtx.save();
@@ -40,7 +42,6 @@ const MoveCam = () => {
     canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.4)';
     canvasCtx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-    // Use global MediaPipe drawing utils from window
     if (window.drawConnectors && window.drawLandmarks) {
       window.drawConnectors(canvasCtx, results.poseLandmarks, window.POSE_CONNECTIONS, { color: '#00FF64', lineWidth: 4 });
       window.drawLandmarks(canvasCtx, results.poseLandmarks, { color: '#FFFFFF', lineWidth: 2, radius: 4 });
@@ -69,6 +70,13 @@ const MoveCam = () => {
         
         const prog = (currentCounter.current / TARGET_REPS) * 100;
         setProgress(Math.min(100, Math.round(prog)));
+
+        // CHECK COMPLETION
+        if (currentCounter.current >= TARGET_REPS) {
+          hasFinished.current = true;
+          setIsCompleted(true);
+          setTimeout(() => navigate('/dashboard'), 4000);
+        }
       }
     }
 
@@ -76,10 +84,7 @@ const MoveCam = () => {
   };
 
   useEffect(() => {
-    if (!window.Pose) {
-      console.error("MediaPipe Pose not loaded yet");
-      return;
-    }
+    if (!window.Pose) return;
 
     const pose = new window.Pose({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
@@ -88,7 +93,6 @@ const MoveCam = () => {
     pose.setOptions({
       modelComplexity: 1,
       smoothLandmarks: true,
-      enableSegmentation: false,
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5,
     });
@@ -98,7 +102,7 @@ const MoveCam = () => {
     if (webcamRef.current && webcamRef.current.video) {
       const camera = new window.Camera(webcamRef.current.video, {
         onFrame: async () => {
-          if (webcamRef.current && webcamRef.current.video) {
+          if (webcamRef.current && webcamRef.current.video && !hasFinished.current) {
             await pose.send({ image: webcamRef.current.video });
           }
         },
@@ -111,30 +115,47 @@ const MoveCam = () => {
 
   return (
     <div style={{ position: 'relative', height: '100vh', background: 'black', overflow: 'hidden' }}>
+      {/* Header Overlay */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '20px', zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <button onClick={() => navigate('/dashboard')} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', padding: '12px', borderRadius: '15px', color: 'white' }}><ArrowLeft size={24} /></button>
         <div style={{ textAlign: 'center' }}>
           <h2 style={{ color: 'white', fontSize: '18px', fontWeight: '900', letterSpacing: '1px' }}>AI Fit Challenge</h2>
-          <p style={{ color: '#00FF64', fontSize: '12px', fontWeight: '800' }}>{feedback.toUpperCase()}</p>
+          <p style={{ color: '#00FF64', fontSize: '12px', fontWeight: '800' }}>{!isCompleted ? feedback.toUpperCase() : 'GOAL REACHED!'}</p>
         </div>
         <div style={{ width: '48px' }} />
       </div>
 
       <Webcam ref={webcamRef} mirrored={true} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-      <canvas 
-        ref={canvasRef} 
-        width="640" 
-        height="480" 
-        style={{ 
-          position: 'absolute', 
-          top: 0, 
-          left: 0, 
-          width: '100%', 
-          height: '100%', 
-          zIndex: 5,
-          transform: 'scaleX(-1)' // This mirrors the skeleton to match the video
-        }} 
-      />
+      <canvas ref={canvasRef} width="640" height="480" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 5, transform: 'scaleX(-1)' }} />
+
+      {/* Completion Overlay */}
+      <AnimatePresence>
+        {isCompleted && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            style={{ 
+              position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100, 
+              background: 'rgba(0,0,0,0.85)', display: 'flex', flexDirection: 'column', 
+              alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '30px', backdropFilter: 'blur(10px)'
+            }}
+          >
+            <motion.div 
+              initial={{ rotate: -20, scale: 0 }} 
+              animate={{ rotate: 0, scale: 1 }} 
+              transition={{ type: 'spring', damping: 10 }}
+              style={{ background: '#EB8911', width: '100px', height: '100px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}
+            >
+              <Trophy size={60} color="white" />
+            </motion.div>
+            <h1 style={{ color: 'white', fontSize: '32px', fontWeight: '900', marginBottom: '10px' }}>MISSION COMPLETED!</h1>
+            <p style={{ color: '#00FF64', fontSize: '18px', fontWeight: '800', marginBottom: '30px' }}>You earned +500 PTS for your city</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#AAA', fontSize: '14px', fontWeight: '700' }}>
+              <CheckCircle size={18} color="#00FF64" /> Redirecting to Dashboard...
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div style={{ position: 'absolute', top: '100px', left: '20px', zIndex: 10, background: 'rgba(0,0,0,0.6)', padding: '20px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', textAlign: 'center', minWidth: '120px' }}>
         <h1 style={{ color: '#00FF64', fontSize: '64px', fontWeight: '900', margin: 0, lineHeight: 1 }}>{count}</h1>
