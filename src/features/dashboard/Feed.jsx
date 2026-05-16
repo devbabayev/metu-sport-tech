@@ -88,6 +88,52 @@ const Feed = () => {
     }
   };
 
+  const [isTracking, setIsTracking] = useState(false);
+  const [sessionSteps, setSessionSteps] = useState(0);
+
+  useEffect(() => {
+    let lastStepTime = 0;
+    const stepThreshold = 12; // Adjust sensitivity
+    const stepCooldown = 350; // ms between steps
+
+    const handleMotion = (event) => {
+      const acc = event.accelerationIncludingGravity;
+      if (!acc) return;
+
+      const magnitude = Math.sqrt(acc.x ** 2 + acc.y ** 2 + acc.z ** 2);
+      const now = Date.now();
+
+      if (magnitude > stepThreshold && now - lastStepTime > stepCooldown) {
+        lastStepTime = now;
+        setSessionSteps(prev => prev + 1);
+        
+        // Find the cardio mission and update it
+        const cardioMission = missions.find(m => m.category === 'cardio');
+        if (cardioMission) {
+          updateProgress(cardioMission.id, 1);
+        }
+      }
+    };
+
+    if (isTracking) {
+      window.addEventListener('devicemotion', handleMotion);
+    }
+
+    return () => window.removeEventListener('devicemotion', handleMotion);
+  }, [isTracking, missions]);
+
+  const requestPermission = async () => {
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+      const permission = await DeviceMotionEvent.requestPermission();
+      if (permission === 'granted') {
+        setIsTracking(true);
+      }
+    } else {
+      // Non-iOS or older devices
+      setIsTracking(true);
+    }
+  };
+
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontWeight: 'bold' }}>Loading...</div>;
 
   return (
@@ -114,8 +160,27 @@ const Feed = () => {
       </div>
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '5px' }}>Ready for action, {profile?.full_name?.split(' ')[0] || 'User'}?</h1>
-        <p style={{ color: '#666', fontSize: '15px', marginBottom: '25px' }}>Keep moving to lead the {profile?.cities?.name || ''} team!</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+           <div>
+              <h1 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '5px' }}>Ready for action, {profile?.full_name?.split(' ')[0] || 'User'}?</h1>
+              <p style={{ color: '#666', fontSize: '15px' }}>Move to lead the {profile?.cities?.name || ''} team!</p>
+           </div>
+           {!isTracking && (
+             <button 
+               onClick={requestPermission}
+               style={{ background: '#EB8911', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '12px', fontWeight: '800', fontSize: '12px', boxShadow: '0 4px 10px rgba(235,137,17,0.3)' }}
+             >
+               Start Tracking 🚶
+             </button>
+           )}
+        </div>
+
+        {isTracking && (
+          <div style={{ background: '#FFF7ED', border: '1px solid #FFEDD5', padding: '10px', borderRadius: '15px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+             <div style={{ width: '8px', height: '8px', background: '#10B981', borderRadius: '50%' }} />
+             <span style={{ fontSize: '12px', fontWeight: '800', color: '#C2410C' }}>Tracking Steps: {sessionSteps} detected</span>
+          </div>
+        )}
 
         {/* AI Daily Mission Card (Integrated with ai_generate.py logic) */}
         <div style={{ 
