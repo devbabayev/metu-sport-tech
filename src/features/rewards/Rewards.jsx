@@ -207,7 +207,7 @@ const Rewards = () => {
               display: 'flex',
               alignItems: 'flex-end',
               justifyContent: 'center',
-              zIndex: 100,
+              zIndex: 2000,
               backdropFilter: 'blur(5px)'
             }}
           >
