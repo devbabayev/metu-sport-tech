@@ -4,6 +4,7 @@ import { Bell, Zap, Camera, Lock, MapPin, Plus, CheckCircle } from 'lucide-react
 import BottomNav from '../../components/layout/BottomNav';
 import { supabase } from '../../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import { getSecureTurkeyTime, isTodayInTurkey } from '../../utils/timeUtils';
 
 const Feed = () => {
   const [profile, setProfile] = useState(null);
@@ -33,7 +34,8 @@ const Feed = () => {
           .eq('user_id', user.id);
 
         const mergedMissions = missionData.map(m => {
-          const prog = progressData?.find(p => p.mission_id === m.id);
+          // Filter progress to only include progress made today (Turkey Time)
+          const prog = progressData?.find(p => p.mission_id === m.id && isTodayInTurkey(p.updated_at));
           return {
             ...m,
             current_value: prog?.current_value || 0,
@@ -69,7 +71,7 @@ const Feed = () => {
         mission_id: missionId,
         current_value: newValue,
         is_completed: isCompleted,
-        updated_at: new Date().toISOString()
+        updated_at: getSecureTurkeyTime().toISOString()
       }, { onConflict: 'user_id,mission_id' });
 
     if (!error) {

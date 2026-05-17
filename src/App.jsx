@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import SignUp from './features/auth/SignUp';
 import Login from './features/auth/Login';
@@ -7,8 +7,13 @@ import Ranks from './features/ranks/Ranks';
 import Rewards from './features/rewards/Rewards';
 import Profile from './features/profile/Profile';
 import MoveCam from './features/move/MoveCam';
+import { initSecureTime } from './utils/timeUtils';
 
 function App() {
+  useEffect(() => {
+    initSecureTime();
+  }, []);
+
   return (
     <Router>
       <div className="app-container">

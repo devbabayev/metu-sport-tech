@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Trophy, CheckCircle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
+import { getSecureTurkeyTime } from '../../utils/timeUtils';
 
 const MoveCam = () => {
   const webcamRef = useRef(null);
@@ -118,7 +119,7 @@ const MoveCam = () => {
                  mission_id: mission.id,
                  current_value: TARGET_REPS,
                  is_completed: true,
-                 updated_at: new Date().toISOString()
+                 updated_at: getSecureTurkeyTime().toISOString()
                }, { onConflict: 'user_id,mission_id' });
 
                // Award points
