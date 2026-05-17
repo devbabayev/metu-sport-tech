@@ -7,10 +7,10 @@ const BottomNav = () => {
   const location = useLocation();
 
   const navItems = [
-    { icon: <Home size={24} />, label: 'Feed', path: '/dashboard' },
-    { icon: <BarChart2 size={24} />, label: 'Ranks', path: '/ranks' },
-    { icon: <Gift size={24} />, label: 'Rewards', path: '/rewards' },
-    { icon: <User size={24} />, label: 'Me', path: '/profile' },
+    { icon: <Home size={24} />, label: 'Ana Sayfa', path: '/dashboard' },
+    { icon: <BarChart2 size={24} />, label: 'Sıralama', path: '/ranks' },
+    { icon: <Gift size={24} />, label: 'Ödüller', path: '/rewards' },
+    { icon: <User size={24} />, label: 'Profil', path: '/profile' },
   ];
 
 

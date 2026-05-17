@@ -152,7 +152,7 @@ const Feed = () => {
     }
   };
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontWeight: 'bold' }}>Loading...</div>;
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontWeight: 'bold' }}>Yükleniyor...</div>;
 
   return (
     <div style={{ background: '#F8F9FA', minHeight: '100vh', padding: '15px 20px 100px 20px' }}>
@@ -167,7 +167,7 @@ const Feed = () => {
           <div>
             <h2 style={{ fontSize: '20px', fontWeight: '900', fontStyle: 'italic', color: '#8B4513', lineHeight: '1.1' }}>MoveUp</h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: '700', color: '#10B981' }}>
-              <MapPin size={12} fill="#10B981" /> {profile?.cities?.name || 'Local'} Team
+              <MapPin size={12} fill="#10B981" /> {profile?.cities?.name || 'Yerel'} Takım
             </div>
           </div>
         </div>
@@ -180,15 +180,15 @@ const Feed = () => {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
            <div>
-              <h1 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '5px' }}>Ready for action, {profile?.full_name?.split(' ')[0] || 'User'}?</h1>
-              <p style={{ color: '#666', fontSize: '15px' }}>Move to lead the {profile?.cities?.name || ''} team!</p>
+              <h1 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '5px' }}>Harekete Hazır mısın, {profile?.full_name?.split(' ')[0] || 'Kullanıcı'}?</h1>
+              <p style={{ color: '#666', fontSize: '15px' }}>{profile?.cities?.name || ''} takımını zirveye taşı!</p>
            </div>
            {!isTracking && (
              <button 
                onClick={requestPermission}
                style={{ background: '#EB8911', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '12px', fontWeight: '800', fontSize: '12px', boxShadow: '0 4px 10px rgba(235,137,17,0.3)' }}
              >
-               Start Tracking 🚶
+               Takibe Başla 🚶
              </button>
            )}
         </div>
@@ -196,7 +196,7 @@ const Feed = () => {
         {isTracking && (
           <div style={{ background: '#FFF7ED', border: '1px solid #FFEDD5', padding: '10px', borderRadius: '15px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
              <div style={{ width: '8px', height: '8px', background: '#10B981', borderRadius: '50%' }} />
-             <span style={{ fontSize: '12px', fontWeight: '800', color: '#C2410C' }}>Tracking Steps: {sessionSteps} detected</span>
+             <span style={{ fontSize: '12px', fontWeight: '800', color: '#C2410C' }}>Adımlar İzleniyor: {sessionSteps} algılandı</span>
           </div>
         )}
 
@@ -206,16 +206,16 @@ const Feed = () => {
         }}>
           <div style={{ position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '15px' }}>
-               <span style={{ background: '#00FF64', color: 'black', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '800', textTransform: 'uppercase' }}>AI DAILY CHALLENGE</span>
+               <span style={{ background: '#00FF64', color: 'black', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '800', textTransform: 'uppercase' }}>YAPAY ZEKA GÜNLÜK GÖREVİ</span>
                <span style={{ fontSize: '24px' }}>🤖</span>
             </div>
-            <h3 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '8px' }}>Jumping Jacks & Squats</h3>
+            <h3 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '8px' }}>Jumping Jacks ve Squat</h3>
             <p style={{ fontSize: '13px', color: '#AAA', fontWeight: '600', marginBottom: '15px', lineHeight: '1.4' }}>
-              Build your core strength with a mix of squats, planks, and jumping jacks to improve flexibility and endurance.
+              Esnekliğini ve dayanıklılığını artırmak için squat, plank ve jumping jacks kombinasyonu ile merkez bölgene güç kat.
             </p>
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '15px', border: '1px dashed rgba(255,255,255,0.2)' }}>
-               <p style={{ fontSize: '11px', color: '#00FF64', fontWeight: '800', marginBottom: '4px' }}>COACH TIP:</p>
-               <p style={{ fontSize: '11px', color: '#EEE', fontWeight: '600' }}>Focus on controlled movements for maximum effectiveness.</p>
+               <p style={{ fontSize: '11px', color: '#00FF64', fontWeight: '800', marginBottom: '4px' }}>KOÇUN TAVSİYESİ:</p>
+               <p style={{ fontSize: '11px', color: '#EEE', fontWeight: '600' }}>Maksimum etki için kontrollü hareketlere odaklan.</p>
             </div>
           </div>
           <Zap size={80} style={{ position: 'absolute', right: '-20px', bottom: '-10px', opacity: 0.1, color: '#00FF64' }} />
@@ -224,9 +224,9 @@ const Feed = () => {
 
         {/* Quest List from Database */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '800' }}>Today's Missions</h2>
+          <h2 style={{ fontSize: '18px', fontWeight: '800' }}>Günün Görevleri</h2>
           <span style={{ fontSize: '12px', color: '#EB8911', fontWeight: '800', background: 'rgba(235,137,17,0.1)', padding: '4px 10px', borderRadius: '12px' }}>
-            ⏳ Resets in: {timeLeft}
+            ⏳ Sıfırlanmaya: {timeLeft}
           </span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '30px' }}>
@@ -240,7 +240,7 @@ const Feed = () => {
                  <div style={{ flex: 1 }}>
                    <h4 style={{ fontWeight: '800', fontSize: '14px', color: '#333' }}>{mission.title}</h4>
                    <p style={{ fontSize: '12px', color: '#888', fontWeight: '600' }}>
-                     {mission.current_value} / {mission.target_value} {mission.category === 'cardio' ? 'steps' : 'reps'}
+                     {mission.current_value} / {mission.target_value} {mission.category === 'cardio' ? 'adım' : 'tekrar'}
                    </p>
                    <div style={{ width: '100%', height: '10px', background: '#F0F0F0', borderRadius: '10px', marginTop: '10px', overflow: 'hidden' }}>
                      <motion.div initial={{ width: 0 }} animate={{ width: `${progressPercent}%` }} style={{ height: '100%', background: 'linear-gradient(90deg, #EB8911, #94216E)', borderRadius: '10px' }} />
@@ -274,11 +274,11 @@ const Feed = () => {
         {/* Real Stats Row */}
         <div style={{ display: 'flex', gap: '15px', marginBottom: '35px' }}>
           <div style={{ flex: 1, background: 'white', padding: '20px', borderRadius: '20px', border: '1px solid #EEE', textAlign: 'center' }}>
-            <p style={{ fontSize: '11px', fontWeight: '800', color: '#999', textTransform: 'uppercase', marginBottom: '8px' }}>Current Rank</p>
+            <p style={{ fontSize: '11px', fontWeight: '800', color: '#999', textTransform: 'uppercase', marginBottom: '8px' }}>Sıralaman</p>
             <h3 style={{ fontSize: '24px', fontWeight: '900' }}>#{userRank}</h3>
           </div>
           <div style={{ flex: 1, background: 'white', padding: '20px', borderRadius: '20px', border: '1px solid #EEE', textAlign: 'center' }}>
-            <p style={{ fontSize: '11px', fontWeight: '800', color: '#999', textTransform: 'uppercase', marginBottom: '8px' }}>Total Points</p>
+            <p style={{ fontSize: '11px', fontWeight: '800', color: '#999', textTransform: 'uppercase', marginBottom: '8px' }}>Toplam Puan</p>
             <h3 style={{ fontSize: '24px', fontWeight: '900' }}>{profile?.balance || 0}</h3>
           </div>
         </div>

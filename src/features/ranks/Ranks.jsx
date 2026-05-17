@@ -67,13 +67,13 @@ const Ranks = () => {
           onClick={() => setActiveTab('global')}
           style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', background: activeTab === 'global' ? 'white' : 'transparent', color: activeTab === 'global' ? '#8B4513' : '#888', fontWeight: '800', fontSize: '14px', boxShadow: activeTab === 'global' ? '0 4px 10px rgba(0,0,0,0.05)' : 'none' }}
         >
-          Global City Rank
+          Genel Şehir Sıralaması
         </button>
         <button 
           onClick={() => setActiveTab('local')}
           style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', background: activeTab === 'local' ? 'white' : 'transparent', color: activeTab === 'local' ? '#8B4513' : '#888', fontWeight: '800', fontSize: '14px', boxShadow: activeTab === 'local' ? '0 4px 10px rgba(0,0,0,0.05)' : 'none' }}
         >
-          Local Top Members
+          Şehir İçi Üyeler
         </button>
       </div>
 
@@ -127,7 +127,7 @@ const CityRankCard = ({ rank, name, points, maxPoints, isUserCity }) => {
         </div>
         <div style={{ flex: 1 }}>
           <h3 style={{ fontSize: '24px', fontWeight: '900', color: '#333' }}>{name} {isUserCity && '🏠'}</h3>
-          <p style={{ fontSize: '12px', fontWeight: '700', color: '#999' }}>Active City Team</p>
+          <p style={{ fontSize: '12px', fontWeight: '700', color: '#999' }}>Aktif Şehir Takımı</p>
         </div>
         <div style={{ width: '55px', height: '55px', borderRadius: '12px', background: '#FDFCFD', border: '1px solid #EEE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>
           🏙️
@@ -135,7 +135,7 @@ const CityRankCard = ({ rank, name, points, maxPoints, isUserCity }) => {
       </div>
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '8px' }}>
-          <span style={{ fontSize: '11px', fontWeight: '800', color: '#8B4513', textTransform: 'uppercase' }}>Total Collective Points</span>
+          <span style={{ fontSize: '11px', fontWeight: '800', color: '#8B4513', textTransform: 'uppercase' }}>Toplam Kolektif Puan</span>
           <span style={{ fontSize: '16px', fontWeight: '900', color: '#8B4513' }}>{points.toLocaleString()}</span>
         </div>
         <div style={{ width: '100%', height: '10px', background: '#F0F0F0', borderRadius: '10px', overflow: 'hidden' }}>
@@ -156,8 +156,8 @@ const MemberRankCard = ({ rank, name, points, maxPoints, isCurrentUser, avatar }
           <img src={avatar} style={{ width: '100%' }} alt={name} />
         </div>
         <div style={{ flex: 1 }}>
-          <h4 style={{ fontWeight: '800', fontSize: '16px' }}>{name} {isCurrentUser && '(You)'}</h4>
-          <span style={{ fontSize: '14px', fontWeight: '900', color: '#EB8911' }}>{points.toLocaleString()} PTS</span>
+          <h4 style={{ fontWeight: '800', fontSize: '16px' }}>{name} {isCurrentUser && '(Sen)'}</h4>
+          <span style={{ fontSize: '14px', fontWeight: '900', color: '#EB8911' }}>{points.toLocaleString()} PUAN</span>
         </div>
       </div>
       <div style={{ width: '100%', height: '6px', background: '#F0F0F0', borderRadius: '10px', overflow: 'hidden' }}>

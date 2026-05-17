@@ -15,12 +15,12 @@ const MoveCam = () => {
   const initialReps = location.state?.currentReps || 0;
   
   const [count, setCount] = useState(initialReps);
-  const [stage, setStage] = useState('Wait...');
-  const [feedback, setFeedback] = useState('Position yourself');
+  const [stage, setStage] = useState('Bekle...');
+  const [feedback, setFeedback] = useState('Pozisyon al');
   const [progress, setProgress] = useState(Math.min(100, Math.round((initialReps / TARGET_REPS) * 100)));
   const [isCompleted, setIsCompleted] = useState(false);
 
-  const [backFeedback, setBackFeedback] = useState('BACK: OK');
+  const [backFeedback, setBackFeedback] = useState('SIRT: OK');
   const audioRef = useRef(null);
 
   const ANGLE_UP = 155;
@@ -92,7 +92,7 @@ const MoveCam = () => {
       const backAngle = calculateAngle(s, h, k);
       
       const backOk = backAngle > 160 && backAngle < 190;
-      setBackFeedback(backOk ? 'BACK: OK' : 'BACK: FIX!');
+      setBackFeedback(backOk ? 'SIRT: OK' : 'SIRT: DÜZELT!');
       
       if (elbowAngle > ANGLE_UP) {
         if (currentStage.current === "down" && !backOk) {
@@ -102,16 +102,16 @@ const MoveCam = () => {
            }
         }
         currentStage.current = "up";
-        setStage("UP");
-        setFeedback("Lower down...");
+        setStage("YUKARI");
+        setFeedback("Aşağı in...");
       }
       
       if (elbowAngle < ANGLE_DOWN && currentStage.current === "up") {
         currentStage.current = "down";
         currentCounter.current += 1;
         setCount(currentCounter.current);
-        setStage("DOWN");
-        setFeedback("Push UP!");
+        setStage("AŞAĞI");
+        setFeedback("Yukarı it!");
         
         const prog = (currentCounter.current / TARGET_REPS) * 100;
         setProgress(Math.min(100, Math.round(prog)));
@@ -210,8 +210,8 @@ const MoveCam = () => {
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '20px', zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <button onClick={saveProgressAndExit} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', padding: '12px', borderRadius: '15px', color: 'white' }}><ArrowLeft size={24} /></button>
         <div style={{ textAlign: 'center' }}>
-          <h2 style={{ color: 'white', fontSize: '18px', fontWeight: '900', letterSpacing: '1px' }}>AI Fit Challenge</h2>
-          <p style={{ color: '#00FF64', fontSize: '12px', fontWeight: '800' }}>{!isCompleted ? feedback.toUpperCase() : 'GOAL REACHED!'}</p>
+          <h2 style={{ color: 'white', fontSize: '18px', fontWeight: '900', letterSpacing: '1px' }}>YZ Fit Mücadelesi</h2>
+          <p style={{ color: '#00FF64', fontSize: '12px', fontWeight: '800' }}>{!isCompleted ? feedback.toUpperCase() : 'HEDEFE ULAŞILDI!'}</p>
         </div>
         <div style={{ width: '48px' }} />
       </div>
@@ -225,22 +225,22 @@ const MoveCam = () => {
             <motion.div initial={{ rotate: -20, scale: 0 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: 'spring', damping: 10 }} style={{ background: '#EB8911', width: '100px', height: '100px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
               <Trophy size={60} color="white" />
             </motion.div>
-            <h1 style={{ color: 'white', fontSize: '32px', fontWeight: '900', marginBottom: '10px' }}>MISSION COMPLETED!</h1>
-            <p style={{ color: '#00FF64', fontSize: '18px', fontWeight: '800', marginBottom: '30px' }}>You earned +500 PTS for your city</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#AAA', fontSize: '14px', fontWeight: '700' }}><CheckCircle size={18} color="#00FF64" /> Redirecting to Dashboard...</div>
+            <h1 style={{ color: 'white', fontSize: '32px', fontWeight: '900', marginBottom: '10px' }}>GÖREV TAMAMLANDI!</h1>
+            <p style={{ color: '#00FF64', fontSize: '18px', fontWeight: '800', marginBottom: '30px' }}>Şehrin için +500 PUAN kazandın</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#AAA', fontSize: '14px', fontWeight: '700' }}><CheckCircle size={18} color="#00FF64" /> Ana Sayfaya Yönlendiriliyor...</div>
           </motion.div>
         )}
       </AnimatePresence>
 
       <div style={{ position: 'absolute', top: '100px', left: '20px', zIndex: 10, background: 'rgba(0,0,0,0.6)', padding: '20px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', textAlign: 'center', minWidth: '120px' }}>
         <h1 style={{ color: '#00FF64', fontSize: '64px', fontWeight: '900', margin: 0, lineHeight: 1 }}>{count}</h1>
-        <p style={{ color: '#AAA', fontSize: '12px', fontWeight: '800', marginTop: '5px' }}>REPS</p>
-        <div style={{ marginTop: '10px', padding: '4px 8px', background: stage === 'UP' ? 'rgba(0,255,100,0.2)' : 'rgba(255,100,0,0.2)', color: stage === 'UP' ? '#00FF64' : '#FF6400', borderRadius: '8px', fontSize: '10px', fontWeight: '900', marginBottom: '5px' }}>{stage}</div>
-        <div style={{ padding: '4px 8px', background: backFeedback === 'BACK: OK' ? 'rgba(0,255,100,0.2)' : 'rgba(255,0,0,0.2)', color: backFeedback === 'BACK: OK' ? '#00FF64' : '#FF4444', borderRadius: '8px', fontSize: '10px', fontWeight: '900' }}>{backFeedback}</div>
+        <p style={{ color: '#AAA', fontSize: '12px', fontWeight: '800', marginTop: '5px' }}>TEKRAR</p>
+        <div style={{ marginTop: '10px', padding: '4px 8px', background: stage === 'YUKARI' ? 'rgba(0,255,100,0.2)' : 'rgba(255,100,0,0.2)', color: stage === 'YUKARI' ? '#00FF64' : '#FF6400', borderRadius: '8px', fontSize: '10px', fontWeight: '900', marginBottom: '5px' }}>{stage}</div>
+        <div style={{ padding: '4px 8px', background: backFeedback === 'SIRT: OK' ? 'rgba(0,255,100,0.2)' : 'rgba(255,0,0,0.2)', color: backFeedback === 'SIRT: OK' ? '#00FF64' : '#FF4444', borderRadius: '8px', fontSize: '10px', fontWeight: '900' }}>{backFeedback}</div>
       </div>
 
       <div style={{ position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', width: '80%', zIndex: 10, textAlign: 'center' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'white', fontSize: '12px', fontWeight: '800', marginBottom: '8px' }}><span>PROGRESS</span><span>{count} / {TARGET_REPS}</span></div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'white', fontSize: '12px', fontWeight: '800', marginBottom: '8px' }}><span>İLERLEME</span><span>{count} / {TARGET_REPS}</span></div>
         <div style={{ width: '100%', height: '16px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}><motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} style={{ height: '100%', background: '#00FF64', boxShadow: '0 0 15px rgba(0,255,100,0.5)' }} /></div>
       </div>
       

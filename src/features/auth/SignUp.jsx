@@ -18,7 +18,7 @@ const SignUp = () => {
       const { data, error } = await supabase.from('cities').select('*');
       if (error) {
         console.error("Fetch cities error:", error);
-        alert("Database Error: Cities could not be loaded. Please check your SQL setup.");
+        alert("Veritabanı Hatası: Şehirler yüklenemedi. Lütfen ayarlarınızı kontrol edin.");
       }
       if (data) setCities(data);
     };
@@ -40,15 +40,15 @@ const SignUp = () => {
           if (foundCity) {
             setCityId(foundCity.id);
           } else {
-            alert(`Detected city "${cityName}" not found in our list. Please select manually.`);
+            alert(`Bulunan "${cityName}" şehri listemizde yok. Lütfen manuel seçin.`);
           }
         } catch (error) {
           console.error("Geocoding error:", error);
-          alert("Could not detect city name. Please select manually.");
+          alert("Şehir adı bulunamadı. Lütfen manuel seçin.");
         }
         setDetecting(false);
       }, (error) => {
-        alert("Location access denied.");
+        alert("Konum izni reddedildi.");
         setDetecting(false);
       });
     }
@@ -57,7 +57,7 @@ const SignUp = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    if (!cityId) return alert("Please select your city!");
+    if (!cityId) return alert("Lütfen şehrinizi seçin!");
     
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -72,7 +72,7 @@ const SignUp = () => {
 
 
     if (error) {
-      alert("Signup Error: " + error.message);
+      alert("Kayıt Hatası: " + error.message);
     } else {
       // For hackathon: Auto-login after signup
       const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -112,16 +112,16 @@ const SignUp = () => {
           fontWeight: '700', 
           color: '#444',
           textTransform: 'uppercase'
-        }}>Move For Your City</p>
+        }}>Şehrin İçin Harekete Geç</p>
       </div>
 
       <form onSubmit={handleSignUp} style={{ width: '100%' }}>
         <div className="input-group">
-          <label className="input-label">Full Name</label>
+          <label className="input-label">Ad Soyad</label>
           <input 
             type="text" 
             className="premium-input" 
-            placeholder="Enter your full name"
+            placeholder="Adınızı ve soyadınızı girin"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
@@ -129,7 +129,7 @@ const SignUp = () => {
         </div>
 
         <div className="input-group">
-          <label className="input-label">Email</label>
+          <label className="input-label">E-posta</label>
           <input 
             type="email" 
             className="premium-input" 
@@ -141,7 +141,7 @@ const SignUp = () => {
         </div>
 
         <div className="input-group">
-          <label className="input-label">Password</label>
+          <label className="input-label">Şifre</label>
           <input 
             type="password" 
             className="premium-input" 
@@ -173,11 +173,11 @@ const SignUp = () => {
           }}
         >
           <MapPin size={20} />
-          {detecting ? 'Detecting...' : 'Automatically Detect My City'}
+          {detecting ? 'Bulunuyor...' : 'Şehrimi Otomatik Bul'}
         </button>
 
         <p style={{ textAlign: 'center', fontSize: '12px', color: '#666', marginBottom: '10px' }}>
-          Or select manually (e.g., Istanbul, Baku)
+          Veya manuel seçin (örn. İstanbul, Bakü)
         </p>
 
         {/* City Select Simulation */}
@@ -189,7 +189,7 @@ const SignUp = () => {
             style={{ appearance: 'none' }}
             required
           >
-            <option value="" disabled>Select your city...</option>
+            <option value="" disabled>Şehrinizi seçin...</option>
             {cities.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
@@ -199,15 +199,15 @@ const SignUp = () => {
 
 
         <button type="submit" className="premium-button">
-          Join Your City Team <Zap size={20} fill="white" />
+          Şehir Takımına Katıl <Zap size={20} fill="white" />
         </button>
       </form>
 
       <p style={{ marginTop: '30px', fontWeight: '600', color: '#444' }}>
-        Already have an account? <span 
+        Zaten hesabınız var mı? <span 
           onClick={() => navigate('/login')}
           style={{ color: '#94216E', cursor: 'pointer' }}
-        >Log In</span>
+        >Giriş Yap</span>
       </p>
     </motion.div>
   );

@@ -23,16 +23,16 @@ const Rewards = () => {
   }, []);
 
   const rewards = [
-    { id: 1, name: 'Nike Metcon 9', price: 15000, img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400', category: 'Gear' },
-    { id: 2, name: '1 Month Gym Pass', price: 5000, img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400', category: 'Access' },
-    { id: 3, name: 'Protein Shaker', price: 1200, img: 'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=400', category: 'Health' },
-    { id: 4, name: 'Smart Fitness Watch', price: 25000, img: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400', category: 'Tech' },
+    { id: 1, name: 'Nike Metcon 9', price: 15000, img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400', category: 'Ekipman' },
+    { id: 2, name: '1 Aylık Spor Salonu Üyeliği', price: 5000, img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400', category: 'Erişim' },
+    { id: 3, name: 'Protein Shaker', price: 1200, img: 'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=400', category: 'Sağlık' },
+    { id: 4, name: 'Akıllı Spor Saati', price: 25000, img: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400', category: 'Teknoloji' },
   ];
 
   return (
     <div style={{ background: '#F8F9FA', minHeight: '100vh', padding: '20px 20px 100px 20px' }}>
       <header style={{ marginBottom: '30px' }}>
-        <h1 style={{ fontSize: '28px', fontWeight: '900', marginBottom: '10px' }}>Marketplace</h1>
+        <h1 style={{ fontSize: '28px', fontWeight: '900', marginBottom: '10px' }}>Mağaza</h1>
         <div style={{ 
           background: 'linear-gradient(135deg, #2D2D2D, #1A1A1A)', 
           padding: '20px', 
@@ -44,8 +44,8 @@ const Rewards = () => {
           boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
         }}>
           <div>
-            <p style={{ fontSize: '12px', fontWeight: '800', color: '#888', textTransform: 'uppercase', marginBottom: '5px' }}>Your Balance</p>
-            <h2 style={{ fontSize: '28px', fontWeight: '900', color: '#EB8911' }}>{profile?.balance || 0} <span style={{ fontSize: '14px', color: 'white' }}>PTS</span></h2>
+            <p style={{ fontSize: '12px', fontWeight: '800', color: '#888', textTransform: 'uppercase', marginBottom: '5px' }}>Bakiyeniz</p>
+            <h2 style={{ fontSize: '28px', fontWeight: '900', color: '#EB8911' }}>{profile?.balance || 0} <span style={{ fontSize: '14px', color: 'white' }}>PUAN</span></h2>
           </div>
           <div style={{ background: 'rgba(235, 137, 17, 0.2)', padding: '12px', borderRadius: '15px' }}>
             <Zap size={24} fill="#EB8911" color="#EB8911" />
@@ -67,8 +67,8 @@ const Rewards = () => {
         overflow: 'hidden'
       }}>
         <div style={{ zIndex: 1 }}>
-          <h3 style={{ fontWeight: '900', fontSize: '18px', marginBottom: '5px' }}>Weekend Booster!</h3>
-          <p style={{ fontSize: '12px', fontWeight: '700' }}>Get 20% discount on all Tech gear</p>
+          <h3 style={{ fontWeight: '900', fontSize: '18px', marginBottom: '5px' }}>Hafta Sonu Fırsatı!</h3>
+          <p style={{ fontSize: '12px', fontWeight: '700' }}>Tüm teknoloji ürünlerinde %20 indirim</p>
         </div>
         <Star size={60} style={{ position: 'absolute', right: '-10px', opacity: 0.2 }} />
       </div>
@@ -104,7 +104,7 @@ const Rewards = () => {
             <div style={{ padding: '15px' }}>
               <h4 style={{ fontSize: '13px', fontWeight: '800', marginBottom: '8px', height: '32px', overflow: 'hidden' }}>{item.name}</h4>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: '900', fontSize: '14px', color: '#333' }}>{item.price} <span style={{ fontSize: '10px', color: '#999' }}>PTS</span></span>
+                <span style={{ fontWeight: '900', fontSize: '14px', color: '#333' }}>{item.price} <span style={{ fontSize: '10px', color: '#999' }}>PUAN</span></span>
                 <button style={{ 
                   background: '#F0F0F0', 
                   border: 'none', 

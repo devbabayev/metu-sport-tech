@@ -20,7 +20,7 @@ const Login = () => {
     });
 
     if (error) {
-      alert("Error: " + error.message);
+      alert("Hata: " + error.message);
       setLoading(false);
     } else {
       navigate('/dashboard');
@@ -43,12 +43,12 @@ const Login = () => {
           color: '#8B4513',
           marginBottom: '5px'
         }}>MoveUp</h1>
-        <p style={{ letterSpacing: '3px', fontSize: '14px', fontWeight: '700', color: '#444', textTransform: 'uppercase' }}>Welcome Back</p>
+        <p style={{ letterSpacing: '3px', fontSize: '14px', fontWeight: '700', color: '#444', textTransform: 'uppercase' }}>Tekrar Hoş Geldin</p>
       </div>
 
       <form onSubmit={handleLogin} style={{ width: '100%' }}>
         <div className="input-group">
-          <label className="input-label">Email</label>
+          <label className="input-label">E-posta</label>
           <input 
             type="email" 
             className="premium-input" 
@@ -60,7 +60,7 @@ const Login = () => {
         </div>
 
         <div className="input-group">
-          <label className="input-label">Password</label>
+          <label className="input-label">Şifre</label>
           <input 
             type="password" 
             className="premium-input" 
@@ -72,16 +72,16 @@ const Login = () => {
         </div>
 
         <button type="submit" className="premium-button" style={{ marginTop: '20px' }} disabled={loading}>
-          {loading ? 'Logging in...' : 'Login to Your Team'} <Zap size={20} fill="white" />
+          {loading ? 'Giriş Yapılıyor...' : 'Takımına Giriş Yap'} <Zap size={20} fill="white" />
         </button>
 
       </form>
 
       <p style={{ marginTop: '30px', fontWeight: '600', color: '#444' }}>
-        Don't have an account? <span 
+        Hesabınız yok mu? <span 
           onClick={() => navigate('/signup')}
           style={{ color: '#94216E', cursor: 'pointer' }}
-        >Sign Up</span>
+        >Kayıt Ol</span>
       </p>
     </motion.div>
   );

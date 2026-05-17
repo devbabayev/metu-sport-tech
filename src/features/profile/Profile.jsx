@@ -32,13 +32,13 @@ const Profile = () => {
     navigate('/login');
   };
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontWeight: 'bold' }}>Loading...</div>;
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontWeight: 'bold' }}>Yükleniyor...</div>;
 
   return (
     <div style={{ background: '#FDFCFD', minHeight: '100vh', padding: '15px 20px 100px 20px' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: '900', fontStyle: 'italic', color: '#8B4513' }}>My Profile</h2>
+        <h2 style={{ fontSize: '24px', fontWeight: '900', fontStyle: 'italic', color: '#8B4513' }}>Profilim</h2>
         <button style={{ background: 'none', border: 'none', color: '#333' }}><Settings size={24} /></button>
       </div>
 
@@ -64,21 +64,21 @@ const Profile = () => {
             <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.full_name}`} style={{ width: '100%' }} alt="avatar" />
           </div>
           <div>
-            <h3 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '4px' }}>{profile?.full_name || 'User'}</h3>
+            <h3 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '4px' }}>{profile?.full_name || 'Kullanıcı'}</h3>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10B981', fontSize: '13px', fontWeight: '800' }}>
-              <MapPin size={14} fill="#10B981" /> {profile?.cities?.name || 'Local'} Team
+              <MapPin size={14} fill="#10B981" /> {profile?.cities?.name || 'Yerel'} Takım
             </div>
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: '20px', marginTop: '25px', position: 'relative', zIndex: 1 }}>
           <div style={{ flex: 1, background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '15px', textAlign: 'center' }}>
-            <p style={{ fontSize: '10px', color: '#AAA', fontWeight: '800', textTransform: 'uppercase', marginBottom: '5px' }}>Balance</p>
-            <p style={{ fontSize: '18px', fontWeight: '900', color: '#EB8911' }}>{profile?.balance || 0} pts</p>
+            <p style={{ fontSize: '10px', color: '#AAA', fontWeight: '800', textTransform: 'uppercase', marginBottom: '5px' }}>Bakiye</p>
+            <p style={{ fontSize: '18px', fontWeight: '900', color: '#EB8911' }}>{profile?.balance || 0} puan</p>
           </div>
           <div style={{ flex: 1, background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '15px', textAlign: 'center' }}>
-            <p style={{ fontSize: '10px', color: '#AAA', fontWeight: '800', textTransform: 'uppercase', marginBottom: '5px' }}>Level</p>
-            <p style={{ fontSize: '18px', fontWeight: '900', color: '#10B981' }}>Lvl {profile?.level || 1}</p>
+            <p style={{ fontSize: '10px', color: '#AAA', fontWeight: '800', textTransform: 'uppercase', marginBottom: '5px' }}>Seviye</p>
+            <p style={{ fontSize: '18px', fontWeight: '900', color: '#10B981' }}>Seviye {profile?.level || 1}</p>
           </div>
         </div>
 
@@ -87,12 +87,12 @@ const Profile = () => {
 
       {/* Menu Options */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <ProfileMenuItem icon={<Award color="#EB8911" />} label="My Achievements" subLabel="12 Badges unlocked" />
-        <ProfileMenuItem icon={<Zap color="#10B981" />} label="Training History" subLabel="View past workouts" />
+        <ProfileMenuItem icon={<Award color="#EB8911" />} label="Başarımlarım" subLabel="12 Rozet açıldı" />
+        <ProfileMenuItem icon={<Zap color="#10B981" />} label="Antrenman Geçmişi" subLabel="Geçmiş antrenmanları gör" />
         <ProfileMenuItem 
           icon={<LogOut color="#EF4444" />} 
-          label="Sign Out" 
-          subLabel="Securely log out" 
+          label="Çıkış Yap" 
+          subLabel="Güvenli şekilde çıkış yap" 
           onClick={handleSignOut}
           isDanger
         />
