@@ -60,7 +60,7 @@ const Profile = () => {
           <div style={{ 
             width: '80px', height: '80px', borderRadius: '25px', border: '3px solid #EB8911', overflow: 'hidden', background: 'white'
           }}>
-            <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.full_name}`} style={{ width: '100%' }} alt="avatar" />
+            <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(profile?.full_name || 'U')}&radius=50&backgroundType=gradientLinear&backgroundRotation=45&backgroundColor=eb8911,94216e`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="avatar" />
           </div>
           <div>
             <h3 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '4px' }}>{profile?.full_name || 'Kullanıcı'}</h3>

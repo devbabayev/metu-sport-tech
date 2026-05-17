@@ -165,7 +165,7 @@ const Feed = () => {
               width: '45px', height: '45px', borderRadius: '50%', border: '2px solid #EB8911', overflow: 'hidden', cursor: 'pointer'
             }}
           >
-            <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.full_name}`} style={{ width: '100%' }} alt="avatar" />
+            <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(profile?.full_name || 'U')}&radius=50&backgroundType=gradientLinear&backgroundRotation=45&backgroundColor=eb8911,94216e`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="avatar" />
           </div>
           <div>
             <h2 style={{ fontSize: '20px', fontWeight: '900', fontStyle: 'italic', color: '#8B4513', lineHeight: '1.1' }}>MoveUp</h2>

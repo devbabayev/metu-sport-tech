@@ -60,7 +60,7 @@ const Ranks = () => {
           onClick={() => navigate('/profile')}
           style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eee', overflow: 'hidden', border: '2px solid #EB8911', cursor: 'pointer' }}
         >
-          <img src={userProfile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile?.full_name}`} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={userProfile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(userProfile?.full_name || 'U')}&radius=50&backgroundType=gradientLinear&backgroundRotation=45&backgroundColor=eb8911,94216e`} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
         <h2 style={{ fontSize: '24px', fontWeight: '900', fontStyle: 'italic', color: '#8B4513' }}>MoveUp</h2>
         <div style={{ width: '40px' }} />
@@ -103,7 +103,7 @@ const Ranks = () => {
               points={member.balance}
               maxPoints={maxUserPoints}
               isCurrentUser={member.id === userProfile?.id}
-              avatar={member.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.full_name}`}
+              avatar={member.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(member.full_name || 'U')}&radius=50&backgroundType=gradientLinear&backgroundRotation=45&backgroundColor=eb8911,94216e`}
             />
           ))
         )}
@@ -158,7 +158,7 @@ const MemberRankCard = ({ rank, name, points, maxPoints, isCurrentUser, avatar }
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
         <span style={{ fontWeight: '900', color: rank <= 3 ? '#EB8911' : '#AAA', width: '25px', fontStyle: 'italic' }}>#{rank}</span>
         <div style={{ width: '45px', height: '45px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #F5F5F5' }}>
-          <img src={avatar} style={{ width: '100%' }} alt={name} />
+          <img src={avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={name} />
         </div>
         <div style={{ flex: 1 }}>
           <h4 style={{ fontWeight: '800', fontSize: '16px' }}>{name} {isCurrentUser && '(Sen)'}</h4>
