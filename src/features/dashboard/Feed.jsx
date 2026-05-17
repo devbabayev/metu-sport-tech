@@ -159,9 +159,12 @@ const Feed = () => {
       {/* Header Section */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ 
-            width: '45px', height: '45px', borderRadius: '50%', border: '2px solid #EB8911', overflow: 'hidden'
-          }}>
+          <div 
+            onClick={() => navigate('/profile')}
+            style={{ 
+              width: '45px', height: '45px', borderRadius: '50%', border: '2px solid #EB8911', overflow: 'hidden', cursor: 'pointer'
+            }}
+          >
             <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.full_name}`} style={{ width: '100%' }} alt="avatar" />
           </div>
           <div>
@@ -172,8 +175,7 @@ const Feed = () => {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <span style={{ fontWeight: '800', color: '#EB8911', fontSize: '16px' }}>{profile?.balance || 0} pts</span>
-          <Bell size={24} color="#333" />
+          <span style={{ fontWeight: '800', color: '#EB8911', fontSize: '16px' }}>{profile?.balance || 0} puan</span>
         </div>
       </div>
 

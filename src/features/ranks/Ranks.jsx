@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Bell, MapPin, Building2, User } from 'lucide-react';
 import BottomNav from '../../components/layout/BottomNav';
 import { supabase } from '../../lib/supabaseClient';
+import { useNavigate } from 'react-router-dom';
 
 const Ranks = () => {
   const [activeTab, setActiveTab] = useState('global'); // 'global' or 'local'
@@ -10,6 +11,7 @@ const Ranks = () => {
   const [localUsers, setLocalUsers] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,11 +56,14 @@ const Ranks = () => {
     <div style={{ background: '#FDFCFD', minHeight: '100vh', padding: '15px 20px 100px 20px' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eee', overflow: 'hidden', border: '2px solid #EB8911' }}>
-          <img src={userProfile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile?.full_name}`} alt="avatar" />
+        <div 
+          onClick={() => navigate('/profile')}
+          style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eee', overflow: 'hidden', border: '2px solid #EB8911', cursor: 'pointer' }}
+        >
+          <img src={userProfile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile?.full_name}`} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
         <h2 style={{ fontSize: '24px', fontWeight: '900', fontStyle: 'italic', color: '#8B4513' }}>MoveUp</h2>
-        <Bell size={24} color="#333" />
+        <div style={{ width: '40px' }} />
       </div>
 
       {/* Custom Tabs */}

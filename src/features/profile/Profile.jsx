@@ -39,7 +39,6 @@ const Profile = () => {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h2 style={{ fontSize: '24px', fontWeight: '900', fontStyle: 'italic', color: '#8B4513' }}>Profilim</h2>
-        <button style={{ background: 'none', border: 'none', color: '#333' }}><Settings size={24} /></button>
       </div>
 
       {/* Profile Card */}
