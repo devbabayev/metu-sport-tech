@@ -11,7 +11,23 @@ const Feed = () => {
   const [missions, setMissions] = useState([]);
   const [userRank, setUserRank] = useState('--');
   const [loading, setLoading] = useState(true);
+  const [timeLeft, setTimeLeft] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const updateTimer = () => {
+      const now = getSecureTurkeyTime();
+      const midnight = new Date(now);
+      midnight.setHours(24, 0, 0, 0);
+      const diff = midnight - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      setTimeLeft(`${hours}h ${minutes}m`);
+    };
+    updateTimer();
+    const timer = setInterval(updateTimer, 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -207,6 +223,12 @@ const Feed = () => {
 
 
         {/* Quest List from Database */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: '800' }}>Today's Missions</h2>
+          <span style={{ fontSize: '12px', color: '#EB8911', fontWeight: '800', background: 'rgba(235,137,17,0.1)', padding: '4px 10px', borderRadius: '12px' }}>
+            ⏳ Resets in: {timeLeft}
+          </span>
+        </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '30px' }}>
           {missions.map((mission) => {
             const progressPercent = Math.min(100, Math.round((mission.current_value / mission.target_value) * 100));
@@ -231,7 +253,7 @@ const Feed = () => {
                      </div>
                    ) : mission.category === 'strength' || mission.category === 'core' ? (
                      <button 
-                        onClick={() => navigate('/move', { state: { targetReps: mission.target_value, missionId: mission.id } })}
+                        onClick={() => navigate('/move', { state: { targetReps: mission.target_value, missionId: mission.id, currentReps: mission.current_value } })}
                         style={{ background: '#8B4513', border: 'none', width: '40px', height: '40px', borderRadius: '10px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                      >
                        <Camera size={18} />

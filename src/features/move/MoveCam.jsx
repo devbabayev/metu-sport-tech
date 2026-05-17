@@ -11,11 +11,13 @@ const MoveCam = () => {
   const canvasRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const TARGET_REPS = location.state?.targetReps || 20;
+  const initialReps = location.state?.currentReps || 0;
   
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(initialReps);
   const [stage, setStage] = useState('Wait...');
   const [feedback, setFeedback] = useState('Position yourself');
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(Math.min(100, Math.round((initialReps / TARGET_REPS) * 100)));
   const [isCompleted, setIsCompleted] = useState(false);
 
   const [backFeedback, setBackFeedback] = useState('BACK: OK');
@@ -23,11 +25,30 @@ const MoveCam = () => {
 
   const ANGLE_UP = 155;
   const ANGLE_DOWN = 75;
-  const TARGET_REPS = location.state?.targetReps || 20;
 
   const currentStage = useRef(null);
-  const currentCounter = useRef(0);
+  const currentCounter = useRef(initialReps);
   const hasFinished = useRef(false);
+
+  const saveProgressAndExit = async () => {
+    // Save partial progress if any reps were done in this session
+    if (currentCounter.current > initialReps && !hasFinished.current) {
+      const targetMissionId = location.state?.missionId;
+      if (targetMissionId) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from('user_missions').upsert({
+            user_id: user.id,
+            mission_id: targetMissionId,
+            current_value: currentCounter.current,
+            is_completed: false,
+            updated_at: getSecureTurkeyTime().toISOString()
+          }, { onConflict: 'user_id,mission_id' });
+        }
+      }
+    }
+    navigate('/dashboard');
+  };
 
   const calculateAngle = (a, b, c) => {
     const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
@@ -187,7 +208,7 @@ const MoveCam = () => {
   return (
     <div style={{ position: 'relative', height: '100vh', background: 'black', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '20px', zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <button onClick={() => navigate('/dashboard')} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', padding: '12px', borderRadius: '15px', color: 'white' }}><ArrowLeft size={24} /></button>
+        <button onClick={saveProgressAndExit} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', padding: '12px', borderRadius: '15px', color: 'white' }}><ArrowLeft size={24} /></button>
         <div style={{ textAlign: 'center' }}>
           <h2 style={{ color: 'white', fontSize: '18px', fontWeight: '900', letterSpacing: '1px' }}>AI Fit Challenge</h2>
           <p style={{ color: '#00FF64', fontSize: '12px', fontWeight: '800' }}>{!isCompleted ? feedback.toUpperCase() : 'GOAL REACHED!'}</p>
