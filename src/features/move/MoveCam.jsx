@@ -18,7 +18,7 @@ const MoveCam = () => {
   const [isCompleted, setIsCompleted] = useState(false);
 
   const [backFeedback, setBackFeedback] = useState('BACK: OK');
-  const audioRef = useRef(new Audio('/sound.mp3'));
+  const audioRef = useRef(null);
 
   const ANGLE_UP = 155;
   const ANGLE_DOWN = 75;
@@ -74,7 +74,10 @@ const MoveCam = () => {
       
       if (elbowAngle > ANGLE_UP) {
         if (currentStage.current === "down" && !backOk) {
-           audioRef.current.play().catch(e => console.log('Audio error:', e));
+           if (audioRef.current) {
+             audioRef.current.currentTime = 0;
+             audioRef.current.play().catch(e => console.log('Audio error:', e));
+           }
         }
         currentStage.current = "up";
         setStage("UP");
@@ -215,6 +218,9 @@ const MoveCam = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', color: 'white', fontSize: '12px', fontWeight: '800', marginBottom: '8px' }}><span>PROGRESS</span><span>{count} / {TARGET_REPS}</span></div>
         <div style={{ width: '100%', height: '16px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}><motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} style={{ height: '100%', background: '#00FF64', boxShadow: '0 0 15px rgba(0,255,100,0.5)' }} /></div>
       </div>
+      
+      {/* Hidden Audio Player for Feedback */}
+      <audio ref={audioRef} src="/sound.mp3" preload="auto" />
     </div>
   );
 };
