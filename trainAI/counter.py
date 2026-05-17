@@ -1,21 +1,22 @@
 import cv2
-import pyttsx3
 import threading
+import pygame
 from cvzone.PoseModule import PoseDetector
 
+pygame.mixer.init()
 is_speaking = False
 
-def speak(text):
+def speak():
     global is_speaking
     if is_speaking:
         return
     def run():
         global is_speaking
         is_speaking = True
-        e = pyttsx3.init()
-        e.setProperty('rate', 150)
-        e.say(text)
-        e.runAndWait()
+        pygame.mixer.music.load("sound.mp3")
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
         is_speaking = False
     threading.Thread(target=run, daemon=True).start()
 
@@ -43,17 +44,14 @@ while True:
         k = (lmList[25][0], lmList[25][1])
         back_angle, _ = detector.findAngle(s, h, k)
 
-        back_ok = 167< back_angle < 180
+        back_ok = 160 < back_angle < 190
 
-        # Когда поднялся — проверяем спину
         if elbow_angle > 155:
             if stage == "down":
-                # Только что поднялся
                 if not back_ok:
-                    speak("Keep your back straight!")
+                    speak()
             stage = "up"
 
-        # Когда опустился — считаем
         if elbow_angle < 75 and stage == "up":
             stage = "down"
             counter += 1
