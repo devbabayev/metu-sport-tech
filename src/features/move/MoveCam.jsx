@@ -104,7 +104,10 @@ const MoveCam = () => {
             if (!user) return;
 
             const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-            const { data: missions } = await supabase.from('missions').select('*').eq('category', 'strength').limit(1);
+            const targetMissionId = location.state?.missionId;
+            if (!targetMissionId) return; // Prevent updating random missions
+            
+            const { data: missions } = await supabase.from('missions').select('*').eq('id', targetMissionId);
             
             if (profile && missions && missions.length > 0) {
                const mission = missions[0];

@@ -223,13 +223,13 @@ const Feed = () => {
                    </div>
                  </div>
                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', alignItems: 'center' }}>
-                   {mission.is_completed ? (
+                   {mission.current_value >= mission.target_value ? (
                      <div style={{ width: '40px', height: '40px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981' }}>
                        <CheckCircle size={20} />
                      </div>
                    ) : mission.category === 'strength' || mission.category === 'core' ? (
                      <button 
-                        onClick={() => navigate('/move', { state: { targetReps: mission.target_value } })}
+                        onClick={() => navigate('/move', { state: { targetReps: mission.target_value, missionId: mission.id } })}
                         style={{ background: '#8B4513', border: 'none', width: '40px', height: '40px', borderRadius: '10px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                      >
                        <Camera size={18} />
