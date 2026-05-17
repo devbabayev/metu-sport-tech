@@ -17,6 +17,9 @@ const MoveCam = () => {
   const [progress, setProgress] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
+  const [backFeedback, setBackFeedback] = useState('BACK: OK');
+  const audioRef = useRef(new Audio('/sound.mp3'));
+
   const ANGLE_UP = 155;
   const ANGLE_DOWN = 75;
   const TARGET_REPS = location.state?.targetReps || 20;
@@ -57,17 +60,28 @@ const MoveCam = () => {
     const p2 = landmarks[13];
     const p3 = landmarks[15];
 
-    // Counting Logic
-    if (p1 && p2 && p3) {
-      const angle = calculateAngle(p1, p2, p3);
+    const s = landmarks[11];
+    const h = landmarks[23];
+    const k = landmarks[25];
+
+    // Counting Logic & Posture Check
+    if (p1 && p2 && p3 && s && h && k) {
+      const elbowAngle = calculateAngle(p1, p2, p3);
+      const backAngle = calculateAngle(s, h, k);
       
-      if (angle > ANGLE_UP) {
+      const backOk = backAngle > 160 && backAngle < 190;
+      setBackFeedback(backOk ? 'BACK: OK' : 'BACK: FIX!');
+      
+      if (elbowAngle > ANGLE_UP) {
+        if (currentStage.current === "down" && !backOk) {
+           audioRef.current.play().catch(e => console.log('Audio error:', e));
+        }
         currentStage.current = "up";
         setStage("UP");
         setFeedback("Lower down...");
       }
       
-      if (angle < ANGLE_DOWN && currentStage.current === "up") {
+      if (elbowAngle < ANGLE_DOWN && currentStage.current === "up") {
         currentStage.current = "down";
         currentCounter.current += 1;
         setCount(currentCounter.current);
@@ -193,7 +207,8 @@ const MoveCam = () => {
       <div style={{ position: 'absolute', top: '100px', left: '20px', zIndex: 10, background: 'rgba(0,0,0,0.6)', padding: '20px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', textAlign: 'center', minWidth: '120px' }}>
         <h1 style={{ color: '#00FF64', fontSize: '64px', fontWeight: '900', margin: 0, lineHeight: 1 }}>{count}</h1>
         <p style={{ color: '#AAA', fontSize: '12px', fontWeight: '800', marginTop: '5px' }}>REPS</p>
-        <div style={{ marginTop: '10px', padding: '4px 8px', background: stage === 'UP' ? 'rgba(0,255,100,0.2)' : 'rgba(255,100,0,0.2)', color: stage === 'UP' ? '#00FF64' : '#FF6400', borderRadius: '8px', fontSize: '10px', fontWeight: '900' }}>{stage}</div>
+        <div style={{ marginTop: '10px', padding: '4px 8px', background: stage === 'UP' ? 'rgba(0,255,100,0.2)' : 'rgba(255,100,0,0.2)', color: stage === 'UP' ? '#00FF64' : '#FF6400', borderRadius: '8px', fontSize: '10px', fontWeight: '900', marginBottom: '5px' }}>{stage}</div>
+        <div style={{ padding: '4px 8px', background: backFeedback === 'BACK: OK' ? 'rgba(0,255,100,0.2)' : 'rgba(255,0,0,0.2)', color: backFeedback === 'BACK: OK' ? '#00FF64' : '#FF4444', borderRadius: '8px', fontSize: '10px', fontWeight: '900' }}>{backFeedback}</div>
       </div>
 
       <div style={{ position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', width: '80%', zIndex: 10, textAlign: 'center' }}>
