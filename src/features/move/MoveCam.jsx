@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Trophy, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 
 const MoveCam = () => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [count, setCount] = useState(0);
   const [stage, setStage] = useState('Wait...');
@@ -18,7 +19,7 @@ const MoveCam = () => {
 
   const ANGLE_UP = 155;
   const ANGLE_DOWN = 75;
-  const TARGET_REPS = 20;
+  const TARGET_REPS = location.state?.targetReps || 20;
 
   const currentStage = useRef(null);
   const currentCounter = useRef(0);

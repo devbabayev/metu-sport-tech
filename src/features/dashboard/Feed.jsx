@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Zap, Camera, Lock, MapPin, Plus } from 'lucide-react';
+import { Bell, Zap, Camera, Lock, MapPin, Plus, CheckCircle } from 'lucide-react';
 import BottomNav from '../../components/layout/BottomNav';
 import { supabase } from '../../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -223,9 +223,13 @@ const Feed = () => {
                    </div>
                  </div>
                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', alignItems: 'center' }}>
-                   {mission.category === 'strength' || mission.category === 'core' ? (
+                   {mission.is_completed ? (
+                     <div style={{ width: '40px', height: '40px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981' }}>
+                       <CheckCircle size={20} />
+                     </div>
+                   ) : mission.category === 'strength' || mission.category === 'core' ? (
                      <button 
-                        onClick={() => navigate('/move')}
+                        onClick={() => navigate('/move', { state: { targetReps: mission.target_value } })}
                         style={{ background: '#8B4513', border: 'none', width: '40px', height: '40px', borderRadius: '10px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                      >
                        <Camera size={18} />

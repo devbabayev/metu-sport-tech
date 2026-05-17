@@ -8,11 +8,11 @@ const BottomNav = () => {
 
   const navItems = [
     { icon: <Home size={24} />, label: 'Feed', path: '/dashboard' },
-    { icon: <Camera size={24} />, label: 'Move', path: '/move' },
     { icon: <BarChart2 size={24} />, label: 'Ranks', path: '/ranks' },
     { icon: <Gift size={24} />, label: 'Rewards', path: '/rewards' },
     { icon: <User size={24} />, label: 'Me', path: '/profile' },
   ];
+
 
   return (
     <div style={{
