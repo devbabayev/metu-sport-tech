@@ -87,8 +87,6 @@ const Profile = () => {
 
       {/* Menu Options */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <ProfileMenuItem icon={<Award color="#EB8911" />} label="Başarımlarım" subLabel="12 Rozet açıldı" />
-        <ProfileMenuItem icon={<Zap color="#10B981" />} label="Antrenman Geçmişi" subLabel="Geçmiş antrenmanları gör" />
         <ProfileMenuItem 
           icon={<LogOut color="#EF4444" />} 
           label="Çıkış Yap" 
