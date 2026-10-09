@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
@@ -14,16 +14,37 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      alert("Hata: " + error.message);
+      if (error) {
+        if (
+          error.message?.includes('fetch') ||
+          error.message?.includes('network') ||
+          error.message?.includes('Failed')
+        ) {
+          const localProfile = localStorage.getItem('moveup_local_profile');
+          if (localProfile) {
+            navigate('/dashboard');
+            return;
+          }
+        }
+        alert("Hata: " + error.message);
+        setLoading(false);
+      } else {
+        navigate('/dashboard');
+      }
+    } catch {
+      const localProfile = localStorage.getItem('moveup_local_profile');
+      if (localProfile) {
+        navigate('/dashboard');
+        return;
+      }
+      alert("Bağlantı hatası: Sunucuya erişilemedi.");
       setLoading(false);
-    } else {
-      navigate('/dashboard');
     }
   };
 

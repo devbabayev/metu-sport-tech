@@ -1,6 +1,5 @@
-import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, BarChart2, Gift, User, Camera } from 'lucide-react';
+import { Home, BarChart2, Gift, User } from 'lucide-react';
 
 const BottomNav = () => {
   const navigate = useNavigate();

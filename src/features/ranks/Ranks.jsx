@@ -1,50 +1,69 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bell, MapPin, Building2, User } from 'lucide-react';
 import BottomNav from '../../components/layout/BottomNav';
 import { supabase } from '../../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
+import { DEFAULT_CITIES } from '../../data/citiesData';
+
 const Ranks = () => {
   const [activeTab, setActiveTab] = useState('global'); // 'global' or 'local'
-  const [cities, setCities] = useState([]);
+  const [cities, setCities] = useState(
+    [...DEFAULT_CITIES].sort((a, b) => b.total_points - a.total_points)
+  );
   const [localUsers, setLocalUsers] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      // 1. Fetch Global Cities
-      const { data: cityData } = await supabase
-        .from('cities')
-        .select('*')
-        .order('total_points', { ascending: false });
-      if (cityData) setCities(cityData);
-
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*, cities(name)')
-          .eq('id', user.id)
-          .single();
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
         
-        if (profile) {
-          setUserProfile(profile);
-          // 2. Fetch Local Members
-          const { data: localData } = await supabase
+        // 1. Fetch Global Cities
+        const { data: cityData } = await supabase
+          .from('cities')
+          .select('*')
+          .order('total_points', { ascending: false });
+        if (cityData && cityData.length > 0) setCities(cityData);
+
+        if (user) {
+          const { data: profile } = await supabase
             .from('profiles')
-            .select('*')
-            .eq('city_id', profile.city_id)
-            .order('balance', { ascending: false })
-            .limit(10);
-          if (localData) setLocalUsers(localData);
+            .select('*, cities(name)')
+            .eq('id', user.id)
+            .single();
+          
+          if (profile) {
+            setUserProfile(profile);
+            // 2. Fetch Local Members
+            const { data: localData } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('city_id', profile.city_id)
+              .order('balance', { ascending: false })
+              .limit(10);
+            if (localData && localData.length > 0) setLocalUsers(localData);
+          }
+        } else {
+          const savedLocalProfile = localStorage.getItem('moveup_local_profile');
+          if (savedLocalProfile) {
+            try {
+              const parsed = JSON.parse(savedLocalProfile);
+              setUserProfile(parsed);
+              setLocalUsers([
+                { id: parsed.id, full_name: parsed.full_name, balance: parsed.balance, avatar_url: parsed.avatar_url },
+                { id: 'u2', full_name: 'Ayxan Məmmədov', balance: 120, avatar_url: '' },
+                { id: 'u3', full_name: 'Leyla Əliyeva', balance: 95, avatar_url: '' },
+              ]);
+            } catch {
+              // ignore parse errors
+            }
+          }
         }
+      } catch (err) {
+        console.warn("Ranks veri yükleme hatası:", err);
       }
-      setLoading(false);
     };
     fetchData();
   }, []);

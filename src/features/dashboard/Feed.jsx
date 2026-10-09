@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Zap, Camera, Lock, MapPin, Plus, CheckCircle } from 'lucide-react';
+import { Zap, Camera, MapPin, CheckCircle } from 'lucide-react';
 import BottomNav from '../../components/layout/BottomNav';
 import { supabase } from '../../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { getSecureTurkeyTime, isTodayInTurkey } from '../../utils/timeUtils';
+
+const DEFAULT_MISSIONS = [
+  { id: '1', title: '50 Squat Yap', target_value: 50, category: 'squat', points: 30, current_value: 0, is_completed: false },
+  { id: '2', title: '30 Şınav Çek', target_value: 30, category: 'pushup', points: 40, current_value: 0, is_completed: false },
+  { id: '3', title: '5000 Adım At', target_value: 5000, category: 'cardio', points: 50, current_value: 0, is_completed: false },
+];
 
 const Feed = () => {
   const [profile, setProfile] = useState(null);
@@ -32,58 +38,108 @@ const Feed = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        // 1. Fetch Profile
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*, cities(name)')
-          .eq('id', user.id)
-          .single();
-        if (profileData) setProfile(profileData);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          // 1. Fetch Profile
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('*, cities(name)')
+            .eq('id', user.id)
+            .single();
+          if (profileData) setProfile(profileData);
 
-        // 2. Fetch All Missions & User Progress
-        const { data: missionData } = await supabase.from('missions').select('*').order('created_at', { ascending: true });
-        const { data: progressData } = await supabase
-          .from('user_missions')
-          .select('*')
-          .eq('user_id', user.id);
+          // 2. Fetch All Missions & User Progress
+          const { data: missionData } = await supabase.from('missions').select('*').order('created_at', { ascending: true });
+          const { data: progressData } = await supabase
+            .from('user_missions')
+            .select('*')
+            .eq('user_id', user.id);
 
-        const mergedMissions = missionData.map(m => {
-          // Filter progress to only include progress made today (Turkey Time)
-          const prog = progressData?.find(p => p.mission_id === m.id && isTodayInTurkey(p.updated_at));
-          return {
-            ...m,
-            current_value: prog?.current_value || 0,
-            is_completed: prog?.is_completed || false
-          };
-        });
-        setMissions(mergedMissions);
+          if (missionData && missionData.length > 0) {
+            const mergedMissions = missionData.map(m => {
+              const prog = progressData?.find(p => p.mission_id === m.id && isTodayInTurkey(p.updated_at));
+              return {
+                ...m,
+                current_value: prog?.current_value || 0,
+                is_completed: prog?.is_completed || false
+              };
+            });
+            setMissions(mergedMissions);
+          } else {
+            setMissions(DEFAULT_MISSIONS);
+          }
 
-        // 3. Calculate Real Rank (based on balance)
-        const { count } = await supabase
-          .from('profiles')
-          .select('id', { count: 'exact', head: true })
-          .gt('balance', profileData?.balance || 0);
-        setUserRank((count || 0) + 1);
+          // 3. Calculate Real Rank (based on balance)
+          const { count } = await supabase
+            .from('profiles')
+            .select('id', { count: 'exact', head: true })
+            .gt('balance', profileData?.balance || 0);
+          setUserRank((count || 0) + 1);
+        } else {
+          const local = localStorage.getItem('moveup_local_profile');
+          if (local) {
+            try {
+              setProfile(JSON.parse(local));
+            } catch {
+              // ignore parse errors
+            }
+          }
+          setMissions(DEFAULT_MISSIONS);
+          setUserRank(1);
+        }
+      } catch {
+        const local = localStorage.getItem('moveup_local_profile');
+        if (local) {
+          try {
+            setProfile(JSON.parse(local));
+          } catch {
+            // ignore parse errors
+          }
+        }
+        setMissions(DEFAULT_MISSIONS);
+        setUserRank(1);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchData();
   }, []);
 
   const updateProgress = async (missionId, increment) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || !profile) return;
+    let currentUser = null;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      currentUser = user;
+    } catch {
+      // offline mode
+    }
+
+    if (!profile) return;
 
     const mission = missions.find(m => m.id === missionId);
+    if (!mission) return;
     const newValue = mission.current_value + increment;
     const isCompleted = newValue >= mission.target_value;
+
+    if (!currentUser) {
+      setMissions(prev => prev.map(m => 
+        m.id === missionId ? { ...m, current_value: newValue, is_completed: isCompleted } : m
+      ));
+      if (isCompleted && !mission.is_completed) {
+        setProfile(prev => {
+          const updated = { ...prev, balance: prev.balance + mission.points };
+          localStorage.setItem('moveup_local_profile', JSON.stringify(updated));
+          return updated;
+        });
+      }
+      return;
+    }
 
     const { error } = await supabase
       .from('user_missions')
       .upsert({
-        user_id: user.id,
+        user_id: currentUser.id,
         mission_id: missionId,
         current_value: newValue,
         is_completed: isCompleted,
@@ -96,11 +152,9 @@ const Feed = () => {
       ));
 
       if (isCompleted && !mission.is_completed) {
-         // Real update in DB
-         await supabase.rpc('increment_balance', { user_id: user.id, amount: mission.points });
+         await supabase.rpc('increment_balance', { user_id: currentUser.id, amount: mission.points });
          await supabase.rpc('increment_city_points', { city_id: profile.city_id, amount: mission.points });
          
-         // Update local profile balance too
          setProfile(prev => ({ ...prev, balance: prev.balance + mission.points }));
       }
     }

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, LogOut, Award, Zap, MapPin, ChevronRight } from 'lucide-react';
+import { LogOut, Zap, MapPin, ChevronRight } from 'lucide-react';
 import BottomNav from '../../components/layout/BottomNav';
 import { supabase } from '../../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -13,22 +13,49 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*, cities(name)')
-          .eq('id', user.id)
-          .single();
-        if (profileData) setProfile(profileData);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('*, cities(name)')
+            .eq('id', user.id)
+            .single();
+          if (profileData) setProfile(profileData);
+        } else {
+          const local = localStorage.getItem('moveup_local_profile');
+          if (local) {
+            try {
+              setProfile(JSON.parse(local));
+            } catch {
+              // ignore parse errors
+            }
+          }
+        }
+      } catch {
+        const local = localStorage.getItem('moveup_local_profile');
+        if (local) {
+          try {
+            setProfile(JSON.parse(local));
+          } catch {
+            // ignore parse errors
+          }
+        }
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchProfile();
   }, []);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // ignore signout errors
+    }
+    localStorage.removeItem('moveup_local_profile');
+    localStorage.removeItem('moveup_local_user');
     navigate('/login');
   };
 

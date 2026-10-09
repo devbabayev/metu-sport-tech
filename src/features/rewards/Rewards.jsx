@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gift, Zap, Star, ChevronRight, ShoppingBag, Coins, ArrowRight, CheckCircle, X } from 'lucide-react';
+import { Zap, Star, ShoppingBag, Coins, ArrowRight, CheckCircle, X } from 'lucide-react';
 import BottomNav from '../../components/layout/BottomNav';
 import { supabase } from '../../lib/supabaseClient';
 
